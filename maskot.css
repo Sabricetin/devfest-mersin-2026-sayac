@@ -1,0 +1,190 @@
+/*!
+ * DevFest Mersin — Alkışlayan Maskot (stiller)
+ * Boyut ve renk için aşağıdaki CSS değişkenlerini geçersiz kıl.
+ */
+
+.devfest-maskot {
+  --maskot-renk:      #4285f4;
+  --maskot-eldiven:   #ffffff;
+  --maskot-ayakkabi:  #3c4043;
+  --maskot-halka:     #fbbc04;
+  --maskot-yuz-zemin: #ffe0b2;
+  --maskot-foto-zemin: #ffffff;
+  --maskot-yuz-cizgi: #3c4043;
+  --maskot-parilti:   #fbbc04;
+  --maskot-genislik:  clamp(7rem, 22vw, 10rem);
+
+  position: relative;
+  display: inline-block;
+  width: var(--maskot-genislik);
+  flex: 0 0 auto;
+  user-select: none;
+}
+
+.devfest-maskot__svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+.devfest-maskot__uzuv     { fill: var(--maskot-renk); }
+.devfest-maskot__eldiven  { fill: var(--maskot-eldiven); stroke: rgba(0,0,0,0.12); stroke-width: 1.5; }
+.devfest-maskot__ayakkabi { fill: var(--maskot-ayakkabi); }
+.devfest-maskot__halka    { fill: var(--maskot-halka); }
+.devfest-maskot__yuzzemin { fill: var(--maskot-yuz-zemin); }
+.devfest-maskot__yuz      { fill: var(--maskot-yuz-cizgi); stroke: var(--maskot-yuz-cizgi); }
+
+/* Fotoğraf yüklendiyse çizim yüz görünmez; arka planı silinmiş görsellerin
+   şeffaf kısmında ten rengi değil, nötr bir zemin kalsın. */
+.devfest-maskot--fotolu .devfest-maskot__yuz      { display: none; }
+.devfest-maskot--fotolu .devfest-maskot__yuzzemin { fill: var(--maskot-foto-zemin); }
+
+/* Dönme merkezleri viewBox koordinatlarında: omuzlar ve kalça. */
+.devfest-maskot__kol,
+.devfest-maskot__bacak,
+.devfest-maskot__kafa,
+.devfest-maskot__govde,
+.devfest-maskot__carpma { transform-box: view-box; }
+
+.devfest-maskot__kol--sol   { transform-origin:  66.5px 126px; transform: rotate(6deg); }
+.devfest-maskot__kol--sag   { transform-origin: 133.5px 126px; transform: rotate(-6deg); }
+.devfest-maskot__bacak--sol { transform-origin:  86.5px 186px; }
+.devfest-maskot__bacak--sag { transform-origin: 113.5px 186px; }
+.devfest-maskot__kafa       { transform-origin: 100px 100px; }
+.devfest-maskot__govde      { transform-origin: 100px 230px; }
+
+.devfest-maskot__carpma {
+  transform-origin: 100px 157px;
+  opacity: 0;
+  fill: none;
+  stroke: var(--maskot-parilti);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+
+/* ------------------------------------------------------- sakin duruş (idle) */
+
+.devfest-maskot__govde    { animation: maskot-nefes 3.4s ease-in-out infinite; }
+.devfest-maskot__kol--sol { animation: maskot-sallan-sol 3.4s ease-in-out infinite; }
+.devfest-maskot__kol--sag { animation: maskot-sallan-sag 3.4s ease-in-out infinite; }
+
+@keyframes maskot-nefes {
+  0%, 100% { transform: translateY(0)      scaleY(1);     }
+  50%      { transform: translateY(-3px)   scaleY(1.015); }
+}
+@keyframes maskot-sallan-sol {
+  0%, 100% { transform: rotate(6deg); }
+  50%      { transform: rotate(11deg); }
+}
+@keyframes maskot-sallan-sag {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(-11deg); }
+}
+
+/* ---------------------------------------------------------------- alkış */
+
+.devfest-maskot--alkis .devfest-maskot__kol--sol { animation: maskot-alkis-sol 1.6s ease-in-out; }
+.devfest-maskot--alkis .devfest-maskot__kol--sag { animation: maskot-alkis-sag 1.6s ease-in-out; }
+.devfest-maskot--alkis .devfest-maskot__govde    { animation: maskot-zipla     1.6s ease-in-out; }
+.devfest-maskot--alkis .devfest-maskot__kafa     { animation: maskot-kafa      1.6s ease-in-out; }
+.devfest-maskot--alkis .devfest-maskot__carpma   { animation: maskot-carpma    1.6s linear; }
+
+/* SVG'de pozitif dönüş saat yönü: sol kol için DIŞARI, sağ kol için İÇERİ.
+   Eller -47° / +47°'de tam ortada buluşur (omuz aralığı 67, kol uzunluğu 46). */
+@keyframes maskot-alkis-sol {
+  0%   { transform: rotate(6deg);   }
+  10%  { transform: rotate(22deg);  }
+  22%  { transform: rotate(-47deg); }
+  34%  { transform: rotate(22deg);  }
+  46%  { transform: rotate(-47deg); }
+  58%  { transform: rotate(22deg);  }
+  70%  { transform: rotate(-47deg); }
+  84%  { transform: rotate(14deg);  }
+  100% { transform: rotate(6deg);   }
+}
+@keyframes maskot-alkis-sag {
+  0%   { transform: rotate(-6deg);  }
+  10%  { transform: rotate(-22deg); }
+  22%  { transform: rotate(47deg);  }
+  34%  { transform: rotate(-22deg); }
+  46%  { transform: rotate(47deg);  }
+  58%  { transform: rotate(-22deg); }
+  70%  { transform: rotate(47deg);  }
+  84%  { transform: rotate(-14deg); }
+  100% { transform: rotate(-6deg);  }
+}
+@keyframes maskot-zipla {
+  0%, 100%      { transform: translateY(0); }
+  22%, 46%, 70% { transform: translateY(-9px); }
+  34%, 58%, 84% { transform: translateY(0); }
+}
+@keyframes maskot-kafa {
+  0%, 100%      { transform: rotate(0deg); }
+  22%, 70%      { transform: rotate(-4deg); }
+  46%           { transform: rotate(4deg); }
+}
+@keyframes maskot-carpma {
+  0%, 18%  { opacity: 0; transform: scale(0.5); }
+  22%      { opacity: 1; transform: scale(1);   }
+  30%, 42% { opacity: 0; transform: scale(1.2); }
+  46%      { opacity: 1; transform: scale(1);   }
+  54%, 66% { opacity: 0; transform: scale(1.2); }
+  70%      { opacity: 1; transform: scale(1);   }
+  80%,100% { opacity: 0; transform: scale(1.2); }
+}
+
+/* -------------------------------------------------------------- "+1" balonu */
+
+/* Her balon ayrı bir elemandır ve kendi animasyonu bitince JS onu siler.
+   Sayaç dolarken arka arkaya birkaç tanesi havada olur. */
+.devfest-maskot__artis {
+  position: absolute;
+  top: -9%;          /* kafanın üstünde dursun, yüzü kapatmasın */
+  left: 50%;
+  padding: 0.12em 0.55em;
+  border-radius: 99px;
+  background: #34a853;
+  color: #fff;
+  font: 700 clamp(0.72rem, 2vw, 0.85rem)/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: maskot-balon 1s ease-out both;
+}
+
+@keyframes maskot-balon {
+  0%   { opacity: 0; transform: translate(calc(-50% + var(--kayma, 0px)), 10px) scale(0.5);  }
+  18%  { opacity: 1; transform: translate(calc(-50% + var(--kayma, 0px)), -8px) scale(1.15); }
+  30%  { opacity: 1; transform: translate(calc(-50% + var(--kayma, 0px)), -20px) scale(1);   }
+  75%  { opacity: 1; transform: translate(calc(-50% + var(--kayma, 0px)), -56px) scale(1);   }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--kayma, 0px)), -76px) scale(0.9); }
+}
+
+/* --------------------------------------------------------------- temalar */
+
+@media (prefers-color-scheme: dark) {
+  .devfest-maskot {
+    --maskot-renk:     #8ab4f8;
+    --maskot-ayakkabi: #202124;
+    --maskot-eldiven:  #f1f3f4;
+  }
+}
+
+/* Hareket istenmiyorsa: sakin duruş da alkış da yok.
+   Artış yine görünür — balon hareketsiz belirip kaybolur. */
+@media (prefers-reduced-motion: reduce) {
+  .devfest-maskot__govde,
+  .devfest-maskot__kol--sol,
+  .devfest-maskot__kol--sag,
+  .devfest-maskot__kafa,
+  .devfest-maskot__carpma,
+  .devfest-maskot--alkis .devfest-maskot__kol--sol,
+  .devfest-maskot--alkis .devfest-maskot__kol--sag,
+  .devfest-maskot--alkis .devfest-maskot__govde,
+  .devfest-maskot--alkis .devfest-maskot__kafa,
+  .devfest-maskot--alkis .devfest-maskot__carpma {
+    animation: none;
+  }
+  .devfest-maskot__artis {
+    animation: maskot-balon-sade 1.6s steps(1, end) both;
+  }
+  @keyframes maskot-balon-sade {
+    0%, 90% { opacity: 1; transform: translate(-50%, -18px); }
+    91%,100%{ opacity: 0; transform: translate(-50%, -18px); }
+  }
+}

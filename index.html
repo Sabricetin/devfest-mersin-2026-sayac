@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DevFest Mersin 2026 — Canlı Katılımcı Sayacı</title>
+<meta name="description" content="DevFest Mersin 2026'ya kaç kişi kayıtlı? Canlı sayaç.">
+<link rel="stylesheet" href="sayac.css">
+<link rel="stylesheet" href="maskot.css">
+<style>
+  :root {
+    --mavi:  #4285f4;
+    --kirmizi:#ea4335;
+    --sari:  #fbbc04;
+    --yesil: #34a853;
+    --zemin: #ffffff;
+    --metin: #202124;
+    --soluk: #5f6368;
+    --cizgi: #e8eaed;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --zemin:#131416; --metin:#e8eaed; --soluk:#9aa0a6; --cizgi:#2e3134; }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 2rem 1.25rem;
+    background: var(--zemin);
+    color: var(--metin);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .kart { width: 100%; max-width: 52rem; text-align: center; }
+
+  .serit {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-bottom: 1.75rem;
+  }
+  .serit span { width: 2.25rem; height: 0.35rem; border-radius: 99px; }
+  .serit span:nth-child(1) { background: var(--mavi); }
+  .serit span:nth-child(2) { background: var(--kirmizi); }
+  .serit span:nth-child(3) { background: var(--sari); }
+  .serit span:nth-child(4) { background: var(--yesil); }
+
+  h1 {
+    margin: 0 0 0.4rem;
+    font-size: clamp(1.75rem, 6vw, 2.75rem);
+    letter-spacing: -0.02em;
+  }
+  .tarih { margin: 0 0 2.5rem; color: var(--soluk); font-size: 1rem; }
+  .tarih b { color: var(--metin); font-weight: 600; }
+
+  .sahne {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.75rem, 3vw, 2rem);
+    flex-wrap: wrap;
+  }
+
+  /* Sayaç ve iki maskot tek satıra sığsın diye sayfaya özel boyutlar. */
+  .sahne .devfest-maskot { --maskot-genislik: clamp(6.5rem, 18vw, 10.5rem); }
+  .sahne .devfest-sayac  { --sayac-daire: clamp(9.5rem, 28vw, 13rem); }
+
+  @media (max-width: 44rem) {
+    .sahne { gap: 1rem 1.5rem; }
+    .sahne .devfest-sayac { order: -1; flex-basis: 100%; }
+  }
+
+  .sayac-kutu {
+    padding: 2.5rem 1.5rem;
+    border: 1px solid var(--cizgi);
+    border-radius: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .yer { margin: 0 0 2rem; color: var(--soluk); font-size: 0.95rem; line-height: 1.6; }
+
+  .buton {
+    display: inline-block;
+    padding: 0.85rem 2rem;
+    border-radius: 99px;
+    background: var(--mavi);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .buton:hover { opacity: 0.9; transform: translateY(-1px); }
+  .buton:focus-visible { outline: 3px solid var(--sari); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .buton { transition: none; }
+    .buton:hover { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="kart">
+  <div class="serit" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+  <h1>DevFest Mersin 2026</h1>
+  <p class="tarih"><b>17 Ekim 2026</b> · Cumartesi · 09.00 – 17.00</p>
+
+  <div class="sayac-kutu">
+    <div class="sahne">
+      <!-- Soldaki maskot. Kafadaki fotoğrafı data-foto belirler; çerçeveleme
+           data-odak ve data-zoom ile ayarlanır (fotoğrafa özel, README'de anlatıldı). -->
+      <div class="devfest-maskot" data-foto="maskot-2.png" data-odak="36% 0%" data-zoom="1.2"></div>
+
+      <!-- Sayaç bileşeni. Başka bir sayfaya taşımak için bu 3 satır + sayac.css + sayac.js yeterli. -->
+      <div class="devfest-sayac" data-yedek="531" data-hedef="1000">
+        <span class="devfest-sayac__sayi" aria-live="polite">–</span>
+        <span class="devfest-sayac__etiket">kişi kayıtlı</span>
+      </div>
+
+      <!-- Sağdaki maskot. -->
+      <div class="devfest-maskot" data-foto="maskot.png" data-odak="52% 0%" data-zoom="1.27"></div>
+    </div>
+  </div>
+
+  <p class="yer">
+    Kampüs Mersin &amp; Garaj Mersin<br>
+    Fatih, 33200 Mezitli / Mersin
+  </p>
+
+  <a class="buton" href="https://kommunity.com/gdg-mersin/events/devfest-mersin-2026-bee55ede"
+     target="_blank" rel="noopener">Ücretsiz kayıt ol</a>
+
+</main>
+
+<script src="sayac.js" defer></script>
+<script src="maskot.js" defer></script>
+</body>
+</html>

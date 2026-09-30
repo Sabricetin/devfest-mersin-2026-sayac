@@ -1,0 +1,151 @@
+/*!
+ * DevFest Mersin — Canlı Katılımcı Sayacı (stiller)
+ * Renk ve boyut için aşağıdaki CSS değişkenlerini geçersiz kılman yeterli.
+ */
+
+.devfest-sayac {
+  --sayac-renk:        #1a73e8;
+  --sayac-etiket-renk: #5f6368;
+  --sayac-hedef-renk:  #80868b;
+  --sayac-nokta-renk:  #34a853;
+  --sayac-halka-iz:    rgba(60, 64, 67, 0.14);
+  --sayac-halka-bas:   #4285f4;
+  --sayac-halka-son:   #34a853;
+  --sayac-daire:       clamp(11rem, 40vw, 14.5rem);
+  --sayac-font-boyut:  clamp(2.1rem, 8vw, 3.2rem);
+
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.1;
+}
+
+.devfest-sayac[hidden] { display: none; }
+
+/* ------------------------------------------------------------ hedef halkası */
+
+.devfest-sayac__daire {
+  position: relative;
+  width: var(--sayac-daire);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+/* Hedef verilmemişse halka yok, daire de yer kaplamasın. */
+.devfest-sayac--hedefsiz .devfest-sayac__daire {
+  width: auto;
+  aspect-ratio: auto;
+}
+
+.devfest-sayac__halka {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);   /* dolum saat 12 yönünden başlasın */
+}
+
+.devfest-sayac__halka circle { fill: none; stroke-width: 10; }
+.devfest-sayac__halka-iz     { stroke: var(--sayac-halka-iz); }
+.devfest-sayac__halka-dolu   { stroke-linecap: round; }
+
+/* Hedefe ulaşıldığında halka tamamen yeşile döner. */
+.devfest-sayac--tamam {
+  --sayac-halka-bas: #34a853;
+  --sayac-halka-son: #34a853;
+  --sayac-hedef-renk: #34a853;
+}
+
+/* ----------------------------------------------------------------- içerik */
+
+.devfest-sayac__ic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15em;
+}
+
+.devfest-sayac__sayi {
+  color: var(--sayac-renk);
+  font-size: var(--sayac-font-boyut);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  /* Animasyon sırasında rakam genişliği oynamasın, satır zıplamasın. */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.devfest-sayac__etiket {
+  color: var(--sayac-etiket-renk);
+  font-size: clamp(0.85rem, 2.2vw, 1rem);
+  font-weight: 500;
+}
+
+.devfest-sayac__hedef {
+  color: var(--sayac-hedef-renk);
+  font-size: clamp(0.75rem, 2vw, 0.85rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* Canlı göstergesi: yalnızca veri gerçekten tazeyken görünür.
+   stale / fallback durumunda nokta yok — kullanıcıya yalan söylemeyelim. */
+.devfest-sayac__nokta {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--sayac-nokta-renk);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.devfest-sayac[data-kaynak="live"] .devfest-sayac__nokta {
+  opacity: 1;
+  animation: devfest-sayac-nabiz 2s ease-in-out infinite;
+}
+
+@keyframes devfest-sayac-nabiz {
+  0%, 100% { transform: scale(1);    opacity: 1;    }
+  50%      { transform: scale(0.72); opacity: 0.35; }
+}
+
+/* Ekran okuyucu için: sayı animasyonunun her karesi değil, yalnızca sonuç. */
+.devfest-sayac__duyuru {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------- temalar */
+
+@media (prefers-color-scheme: dark) {
+  .devfest-sayac {
+    --sayac-renk:        #8ab4f8;
+    --sayac-etiket-renk: #9aa0a6;
+    --sayac-hedef-renk:  #9aa0a6;
+    --sayac-nokta-renk:  #81c995;
+    --sayac-halka-iz:    rgba(232, 234, 237, 0.14);
+    --sayac-halka-bas:   #8ab4f8;
+    --sayac-halka-son:   #81c995;
+  }
+  .devfest-sayac--tamam {
+    --sayac-halka-bas: #81c995;
+    --sayac-halka-son: #81c995;
+    --sayac-hedef-renk: #81c995;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .devfest-sayac[data-kaynak="live"] .devfest-sayac__nokta { animation: none; }
+  .devfest-sayac__nokta { transition: none; }
+}
