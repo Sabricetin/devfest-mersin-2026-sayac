@@ -7,6 +7,7 @@
 <meta name="description" content="DevFest Mersin 2026'ya kaç kişi kayıtlı? Canlı sayaç.">
 <link rel="stylesheet" href="sayac.css">
 <link rel="stylesheet" href="maskot.css">
+<link rel="stylesheet" href="analitik.css">
 <style>
   :root {
     --mavi:  #4285f4;
@@ -132,12 +133,16 @@
     Fatih, 33200 Mezitli / Mersin
   </p>
 
+  <!-- data-olay: analitik.js bu butonun tıklanmasını bu adla GA4'e yazar. -->
   <a class="buton" href="https://kommunity.com/gdg-mersin/events/devfest-mersin-2026-bee55ede"
-     target="_blank" rel="noopener">Ücretsiz kayıt ol</a>
+     target="_blank" rel="noopener" data-olay="kayit_tikla">Ücretsiz kayıt ol</a>
 
 </main>
 
 <script src="sayac.js" defer></script>
 <script src="maskot.js" defer></script>
+
+<!-- Ziyaretçi analitiği. data-ga4 kendi ölçüm kimliğinle değişmeden ölçüm başlamaz. -->
+<script src="analitik.js" defer data-ga4="G-D2290FXXF9"></script>
 </body>
 </html>

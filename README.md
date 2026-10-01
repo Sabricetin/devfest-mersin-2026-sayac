@@ -125,6 +125,80 @@ Bu yalnızca bir açılış gösterisidir; gösterilen değer her zaman kaynakta
 
 **Gizlilik:** Kommunity yanıtındaki 68 alandan yalnızca `users_count` ve `show_user_count` okunur. Katılımcı isimleri, avatarlar veya başka kişisel veri okunmaz, saklanmaz, iletilmez. `localStorage`'a yalnızca sayı ve zaman damgası yazılır.
 
+## Ziyaretçi analitiği
+
+`analitik.js` sayfayı Google Analytics 4'e bağlar: toplam sayfa gösterimi, tekil ziyaretçi, trafik kaynağı, şehir/ülke, cihaz ve tıklama olayları. Sayacı ve maskotu tanımaz; dosya silinirse sayfa aynen çalışır.
+
+### Kurulum
+
+1. [analytics.google.com](https://analytics.google.com) → hesap + mülk oluştur (ülke Türkiye, para birimi TRY).
+2. Platform olarak **Web**'i seç, site adresini gir (`https://sabricetin.github.io/devfest-mersin-2026-sayac/`).
+3. Açılan ekrandaki **ölçüm kimliğini** (`G-` ile başlar) kopyala.
+4. `index.html`'in sonundaki satırda `G-XXXXXXXXXX` yerine yapıştır:
+
+```html
+<script src="analitik.js" defer data-ga4="G-ABC1234567"></script>
+```
+
+5. Commit + push. GitHub Pages yayınlayınca GA4 → **Raporlar → Gerçek zamanlı**'da kendini görürsün.
+
+Kimlik `G-XXXXXXXXXX` olarak kaldığı sürece analitik tamamen kapalıdır: istek gitmez, çerez şeridi çıkmaz. Yani bu dosyalar yerel testte ve geliştirme sırasında yolda durmaz.
+
+### Hazır gelen raporlar
+
+| Soru | GA4'te nereye bakılır |
+| --- | --- |
+| Kaç sayfa gösterimi oldu | Raporlar → Etkileşim → Sayfalar ve ekranlar |
+| Kaç farklı kişi girdi | Raporlar → Edinme → Genel bakış (`Etkin kullanıcılar`) |
+| Nereden geldiler | Raporlar → Edinme → Trafik edinme (`Oturum kaynağı / aracı`) |
+| Hangi şehirden | Raporlar → Kullanıcı → Demografi → Ayrıntılar → Şehir |
+| Telefon mu bilgisayar mı | Raporlar → Teknoloji → Genel bakış |
+| Şu anda kaç kişi sitede | Raporlar → Gerçek zamanlı |
+
+### Sayfaya özel olaylar
+
+| Olay | Ne zaman | Parametreler |
+| --- | --- | --- |
+| `kayit_tikla` | "Ücretsiz kayıt ol" butonu tıklandığında | `baglanti_metni`, `hedef_alan`, `hedef_url` |
+| `disi_baglanti` | Etiketsiz, başka siteye giden her bağlantıda | aynı |
+| `sayac_goruldu` | Sayaç ilk gerçek değerini çizdiğinde | `kayit_sayisi`, `veri_kaynagi`, `hedefe_oran` |
+| `cerez_secimi` | Çerez şeridinde seçim yapıldığında | `secim` (`kabul` / `ret`) |
+
+`sayac_goruldu`'nun `veri_kaynagi` parametresi işin sağlık göstergesidir: `live` değilse o ziyaretçi canlı veriyi değil, yedek sayıyı görmüştür. Etkinlik haftası bu oranı izlemek, API'nin sessizce düşüp düşmediğini söyler.
+
+Sayfaya yeni bir buton eklersen `data-olay="..."` yazman yeterli; `analitik.js` değişmez.
+
+```html
+<a href="https://maps.app.goo.gl/..." data-olay="yol_tarifi">Yol tarifi</a>
+```
+
+**Önemli:** Parametreler GA4 raporlarında kendiliğinden görünmez. Yönetici → Veri görüntüleme → **Özel tanımlar** → *Özel boyut oluştur* ile her parametreyi bir kez kaydet (`veri_kaynagi`, `hedef_alan`, `secim`); sayısal olanlar (`kayit_sayisi`, `hedefe_oran`) için *özel metrik*. Kayıttan sonraki veri raporlanır, geçmişe dönük çalışmaz — bu yüzden kurulumla aynı gün yap.
+
+### Hangi paylaşım işe yaradı
+
+GA4 referrer'ı kendisi okur ama Instagram bio'su, WhatsApp ve QR kod referrer göndermez; hepsi "doğrudan" görünür. Paylaşacağın bağlantıya etiket ekle:
+
+```
+...github.io/devfest-mersin-2026-sayac/?utm_source=instagram&utm_medium=bio
+...github.io/devfest-mersin-2026-sayac/?utm_source=whatsapp&utm_medium=grup
+...github.io/devfest-mersin-2026-sayac/?utm_source=afis&utm_medium=qr
+```
+
+Bunlar *Trafik edinme* raporunda ayrı satırlar olarak görünür.
+
+### Görsel pano
+
+Kalıcı bir ekran istiyorsan: [Looker Studio](https://lookerstudio.google.com) → Oluştur → Rapor → veri kaynağı **Google Analytics** → mülkünü seç. Sürükle-bırak ile sayfa gösterimi, kaynak kırılımı, Türkiye haritası ve `kayit_tikla` sayısını tek sayfaya koyup linkini ekiple paylaşabilirsin. Ücretsiz.
+
+### KVKK ve gizlilik
+
+- Ölçüm **Consent Mode v2** ile başlar: onay verilene kadar `analytics_storage: denied`, yani çerez yazılmaz, ziyaretçi kimliklendirilmez — yalnızca kimliksiz toplu gösterim sayılır.
+- Şeritte **Kabul et**'e basılırsa çerezli ölçüme geçilir, seçim `localStorage`'da saklanır ve bir daha sorulmaz.
+- Tarayıcı **Do Not Track** gönderiyorsa şerit hiç gösterilmez, çerezsiz modda kalınır.
+- Kişi bazında "kim tıkladı" verisi ne toplanır ne de toplanabilir; GA4 toplu veri verir, IP'yi saklamaz.
+
+Analitiği tamamen kapatmak için `index.html`'deki `analitik.js` ve `analitik.css` satırlarını sil — başka hiçbir yere dokunman gerekmez.
+
 ## Yerel test
 
 ```bash
@@ -151,6 +225,7 @@ Kalıcı kullanım için Kommunity ekibinden resmî API erişimi istemek en sağ
 - [ ] `data-yedek` değeri güncel mi
 - [ ] Mobilde ve karanlık temada görünüm bozuk değil mi
 - [ ] `maskot.png` ve `maskot-2.png` yerinde mi (yoksa çizim yüz görünür)
+- [ ] GA4 gerçek zamanlı raporu kendi ziyaretini görüyor mu
 
 ## Dosyalar
 
@@ -162,6 +237,8 @@ maskot.js    alkışlayan karakter (sayacı tanımaz, olayla bağlı)
 maskot.css   maskot stilleri ve animasyonları
 maskot.png   sağdaki maskotun fotoğrafı
 maskot-2.png soldaki maskotun fotoğrafı
+analitik.js  GA4 ölçümü + çerez onayı (sayacı tanımaz, olayla bağlı)
+analitik.css çerez onay şeridinin stilleri
 ```
 
 `CANLI-SAYAC-MIMARI.md` ilk tasarım dokümanıdır. Sunucu tarafı bir proxy öngörüyordu; CORS'un açık olduğu doğrulandığı için proxy yapılmadı, koruma katmanı istemci tarafına taşındı.

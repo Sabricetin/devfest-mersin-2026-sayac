@@ -1,0 +1,92 @@
+/*!
+ * DevFest Mersin — Çerez Onay Şeridi (stiller)
+ * analitik.js yalnızca onay sorulacaksa bu şeridi sayfaya ekler.
+ * Renkleri sayfanın değişkenlerinden alır, yoksa Google renklerine düşer.
+ */
+
+.devfest-onay {
+  --onay-zemin: var(--zemin, #ffffff);
+  --onay-metin: var(--metin, #202124);
+  --onay-soluk: var(--soluk, #5f6368);
+  --onay-cizgi: var(--cizgi, #e8eaed);
+  --onay-mavi:  var(--mavi,  #4285f4);
+  --onay-sari:  var(--sari,  #fbbc04);
+
+  position: fixed;
+  z-index: 50;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  margin-inline: auto;
+  max-width: 34rem;
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  padding: 1rem 1.15rem;
+
+  background: var(--onay-zemin);
+  color: var(--onay-metin);
+  border: 1px solid var(--onay-cizgi);
+  border-radius: 0.9rem;
+  box-shadow: 0 6px 24px rgba(32, 33, 36, 0.16);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  animation: devfest-onay-gir 0.25s ease-out both;
+}
+
+.devfest-onay__metin {
+  flex: 1 1 15rem;
+  margin: 0;
+  color: var(--onay-soluk);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.devfest-onay__dugmeler {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.devfest-onay__dugme {
+  padding: 0.55rem 1.1rem;
+  border: 0;
+  border-radius: 99px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.devfest-onay__dugme:hover { opacity: 0.85; }
+
+.devfest-onay__dugme:focus-visible {
+  outline: 3px solid var(--onay-sari);
+  outline-offset: 2px;
+}
+
+.devfest-onay__dugme--kabul {
+  background: var(--onay-mavi);
+  color: #fff;
+}
+
+.devfest-onay__dugme--ret {
+  background: transparent;
+  color: var(--onay-soluk);
+  box-shadow: inset 0 0 0 1px var(--onay-cizgi);
+}
+
+@keyframes devfest-onay-gir {
+  from { opacity: 0; transform: translateY(0.75rem); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Hareket istenmiyorsa şerit kayarak değil, olduğu yerde görünür. */
+@media (prefers-reduced-motion: reduce) {
+  .devfest-onay { animation: none; }
+  .devfest-onay__dugme { transition: none; }
+}
