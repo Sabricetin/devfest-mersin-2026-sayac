@@ -7,6 +7,8 @@
 <meta name="description" content="DevFest Mersin 2026'ya kaç kişi kayıtlı? Canlı sayaç.">
 <link rel="stylesheet" href="sayac.css">
 <link rel="stylesheet" href="maskot.css">
+<link rel="stylesheet" href="galeri.css">
+<link rel="stylesheet" href="kutlama.css">
 <link rel="stylesheet" href="analitik.css">
 <style>
   :root {
@@ -115,7 +117,7 @@
     <div class="sahne">
       <!-- Soldaki maskot. Kafadaki fotoğrafı data-foto belirler; çerçeveleme
            data-odak ve data-zoom ile ayarlanır (fotoğrafa özel, README'de anlatıldı). -->
-      <div class="devfest-maskot" data-foto="maskot-2.png" data-odak="36% 0%" data-zoom="1.2"></div>
+      <div class="devfest-maskot" data-foto="Maskot/maskot-2.webp" data-odak="36% 0%" data-zoom="1.2"></div>
 
       <!-- Sayaç bileşeni. Başka bir sayfaya taşımak için bu 3 satır + sayac.css + sayac.js yeterli. -->
       <div class="devfest-sayac" data-yedek="531" data-hedef="1000">
@@ -124,9 +126,15 @@
       </div>
 
       <!-- Sağdaki maskot. -->
-      <div class="devfest-maskot" data-foto="maskot.png" data-odak="52% 0%" data-zoom="1.27"></div>
+      <div class="devfest-maskot" data-foto="Maskot/maskot.webp" data-odak="52% 0%" data-zoom="1.27"></div>
     </div>
   </div>
+
+  <!-- 1000'e son 23 kişi. Boş doğar: kutuları galeri.js kurar, sayı 978'e
+       gelene kadar bölüm gizli kalır. Tamamen dekoratif olduğu için ekran
+       okuyucuya kapalı — sayıyı zaten sayacın duyuru alanı okuyor. -->
+  <section class="devfest-galeri" hidden aria-hidden="true"
+           data-baslangic="978" data-hedef="1000"></section>
 
   <p class="yer">
     Kampüs Mersin &amp; Garaj Mersin<br>
@@ -139,8 +147,16 @@
 
 </main>
 
+<!-- Hedefe ulaşınca açılan kutlama katmanı. Ortadaki maskotun fotoğrafı ve
+     çerçevelemesi burada; kutlama.js başka hiçbir bileşeni tanımaz. -->
+<div class="devfest-kutlama" hidden
+     data-hedef="1000" data-sure="10000"
+     data-foto="Maskot/mert.webp" data-odak="42% 0%" data-zoom="1.35"></div>
+
 <script src="sayac.js" defer></script>
 <script src="maskot.js" defer></script>
+<script src="galeri.js" defer></script>
+<script src="kutlama.js" defer></script>
 
 <!-- Ziyaretçi analitiği. data-ga4 kendi ölçüm kimliğinle değişmeden ölçüm başlamaz. -->
 <script src="analitik.js" defer data-ga4="G-D2290FXXF9"></script>

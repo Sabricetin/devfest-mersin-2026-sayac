@@ -1,0 +1,193 @@
+/*!
+ * DevFest Mersin — Hedef Kutlaması (stiller)
+ * Ekranı kaplayan kutlama katmanı: ortada dans eden maskot, etrafta konfeti.
+ */
+
+/* Kutlama açıkken arkadaki sayfa kaymasın. */
+.devfest-kutlama-acik { overflow: hidden; }
+
+.devfest-kutlama {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(8, 9, 11, 0.93);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  cursor: pointer;          /* herhangi bir yere tıklayınca kapanır */
+}
+.devfest-kutlama[hidden] { display: none; }
+.devfest-kutlama--acik { opacity: 1; }
+
+.devfest-kutlama__ic {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  transform: scale(0.82);
+  transition: transform 0.6s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.devfest-kutlama--acik .devfest-kutlama__ic { transform: scale(1); }
+
+/* ---------------------------------------------------------------- maskot */
+
+.devfest-kutlama__maskot {
+  --maskot-genislik: clamp(11rem, 34vmin, 20rem);
+  --maskot-renk:     #4285f4;
+  --maskot-halka:    #fbbc04;
+  --maskot-eldiven:  #ffffff;
+  --maskot-ayakkabi: #3c4043;
+
+  display: block;
+  margin: 0 auto 1.25rem;
+  filter: drop-shadow(0 12px 30px rgba(0, 0, 0, 0.45));
+}
+
+/* ----------------------------------------------------------------- yazı */
+
+.devfest-kutlama__sayi {
+  margin: 0;
+  color: #fff;
+  font: 800 clamp(2.2rem, 9vmin, 4.5rem)/1.05 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  letter-spacing: -0.03em;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+.devfest-kutlama__alt {
+  margin: 0.5rem 0 0;
+  color: #e8eaed;
+  font: 500 clamp(1rem, 3.2vmin, 1.35rem)/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.devfest-kutlama__kapat {
+  margin-top: 1.75rem;
+  padding: 0.6rem 1.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font: 600 0.95rem system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.devfest-kutlama__kapat:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.6);
+}
+.devfest-kutlama__kapat:focus-visible { outline: 3px solid #fbbc04; outline-offset: 3px; }
+
+/* ----------------------------------------------------------------- dans */
+
+/* maskot.css'teki sakin duruş ve alkış yerine burada dans var.
+   :not(--alkis) gerekmez; bu maskot data-oto="hayir" ile alkışa hiç katılmaz. */
+.devfest-kutlama__maskot .devfest-maskot__govde {
+  animation: kutlama-dans-govde 0.72s ease-in-out infinite;
+}
+.devfest-kutlama__maskot .devfest-maskot__kol--sol {
+  animation: kutlama-dans-sol 0.72s ease-in-out infinite;
+}
+.devfest-kutlama__maskot .devfest-maskot__kol--sag {
+  animation: kutlama-dans-sag 0.72s ease-in-out infinite;
+}
+.devfest-kutlama__maskot .devfest-maskot__kafa {
+  animation: kutlama-dans-kafa 1.44s ease-in-out infinite;
+}
+.devfest-kutlama__maskot .devfest-maskot__bacak--sol {
+  animation: kutlama-dans-bacak-sol 0.72s ease-in-out infinite;
+}
+.devfest-kutlama__maskot .devfest-maskot__bacak--sag {
+  animation: kutlama-dans-bacak-sag 0.72s ease-in-out infinite;
+}
+
+@keyframes kutlama-dans-govde {
+  0%, 100% { transform: translateY(0)     rotate(-4deg); }
+  50%      { transform: translateY(-16px) rotate(4deg);  }
+}
+/* SVG'de pozitif dönüş saat yönü, kol omuzdan aşağı sarkar. Sol kol için
+   NEGATİF açı gövdeye doğru gider (alkışta eller öyle buluşuyor); dansta
+   kollar dışa-yukarı açılsın istiyoruz, yani sol pozitif / sağ negatif. */
+@keyframes kutlama-dans-sol {
+  0%, 100% { transform: rotate(28deg);  }
+  50%      { transform: rotate(150deg); }
+}
+@keyframes kutlama-dans-sag {
+  0%, 100% { transform: rotate(-28deg);  }
+  50%      { transform: rotate(-150deg); }
+}
+@keyframes kutlama-dans-kafa {
+  0%, 100% { transform: rotate(-8deg); }
+  50%      { transform: rotate(8deg);  }
+}
+@keyframes kutlama-dans-bacak-sol {
+  0%, 100% { transform: rotate(0deg);  }
+  50%      { transform: rotate(-11deg); }
+}
+@keyframes kutlama-dans-bacak-sag {
+  0%, 100% { transform: rotate(11deg); }
+  50%      { transform: rotate(0deg);  }
+}
+
+/* -------------------------------------------------------------- konfeti */
+
+.devfest-kutlama__konfeti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.devfest-kutlama__konfeti i {
+  position: absolute;
+  width: var(--g, 9px);
+  height: var(--y, 14px);
+  background: var(--renk, #fbbc04);
+  border-radius: 1px;
+  will-change: transform, opacity;
+}
+.devfest-kutlama__konfeti i.yuvarlak {
+  height: var(--g, 9px);
+  border-radius: 50%;
+}
+
+/* Açılış patlaması — ekranın ortasından dışarı. */
+.devfest-kutlama__konfeti i.patla {
+  left: 50%;
+  top: 46%;
+  animation: kutlama-patla 1.6s cubic-bezier(0.15, 0.6, 0.35, 1) both;
+}
+@keyframes kutlama-patla {
+  0%   { transform: translate(-50%, -50%) scale(0.4); opacity: 1; }
+  12%  { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy)))
+                    rotate(var(--don, 360deg)) scale(1); opacity: 0; }
+}
+
+/* Sürekli yağmur — kutlama boyunca üstten düşer. */
+.devfest-kutlama__konfeti i.yag {
+  top: 0;
+  animation: kutlama-yag 4s linear both;
+}
+@keyframes kutlama-yag {
+  0%   { transform: translate(0, -14vh) rotate(0deg); opacity: 0; }
+  8%   { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translate(var(--kay, 0), 108vh) rotate(var(--don, 720deg)); opacity: 0; }
+}
+
+/* --------------------------------------------------------------- temalar */
+
+/* Katman her temada koyu: konfeti ve fotoğraf en iyi orada okunuyor. */
+
+@media (prefers-reduced-motion: reduce) {
+  .devfest-kutlama,
+  .devfest-kutlama__ic { transition: none; }
+  .devfest-kutlama__ic { transform: none; }
+  .devfest-kutlama__maskot .devfest-maskot__govde,
+  .devfest-kutlama__maskot .devfest-maskot__kol--sol,
+  .devfest-kutlama__maskot .devfest-maskot__kol--sag,
+  .devfest-kutlama__maskot .devfest-maskot__kafa,
+  .devfest-kutlama__maskot .devfest-maskot__bacak--sol,
+  .devfest-kutlama__maskot .devfest-maskot__bacak--sag { animation: none; }
+}

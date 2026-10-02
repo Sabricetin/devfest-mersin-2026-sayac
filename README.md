@@ -47,7 +47,7 @@ Stil için CSS değişkenleri: `--sayac-renk`, `--sayac-etiket-renk`, `--sayac-h
 
 Sayının iki yanında duran karakterler. Sayı her arttığında **alkışlarlar** ve kafalarının üstünden yeşil `+1` balonları yükselir. Sakin dururken hafifçe nefes alırlar.
 
-`index.html` içinde **iki maskot** var: solda `maskot-2.png`, sağda `maskot.png`. İstediğin kadar ekleyebilirsin — her `.devfest-maskot` öğesi kendi fotoğrafını ve çerçeve ayarını taşır, hepsi aynı sayaç olayını dinler. Aynı anda tıpatıp aynı hareketi yapmasınlar diye her maskot bir öncekinden 140 ms sonra alkışlar.
+`index.html` içinde **iki maskot** var: solda `Maskot/maskot-2.png`, sağda `Maskot/maskot.png`. İstediğin kadar ekleyebilirsin — her `.devfest-maskot` öğesi kendi fotoğrafını ve çerçeve ayarını taşır, hepsi aynı sayaç olayını dinler. Aynı anda tıpatıp aynı hareketi yapmasınlar diye her maskot bir öncekinden 140 ms sonra alkışlar.
 
 Her balon **tek bir kaydı** temsil eder, üzerinde hep `+1` yazar. Kaç kişi eklendiyse o kadar balon çıkar (aynı anda 3 kişi kaydolduysa 3 balon), bir seride en çok 7 tane. Balonlar hafif yatay dağılımla çıkar, üst üste binmesinler diye.
 
@@ -94,6 +94,70 @@ document.dispatchEvent(new CustomEvent('devfest:sayac', {
 ```
 
 Olay alanları: `count` (yeni sayı), `onceki`, `artis` (fark; açılışta sayının kendisi), `kaynak` (`live`/`stale`/`fallback`), `acilis` (sayfa açılışındaki ilk değer mi), `hedef`.
+
+## 1000'e son 23 kişi
+
+Sayı **978'e** ulaştığında sayacın altında 23 maskotluk bir sıra açılır. Kutular önce gri **silüet** olarak durur; her yeni kayıtta sıradaki kutu bir fotoğrafla dolar, yerine oturur ve tek başına alkışlar. 978 → 1000 arası tam 23 kayıt eder, yani her kutu bir kişiye denk gelir.
+
+Son üç kutu sabittir ve **yeşil halkayla** ayrışır:
+
+| Kutu | Kayıt | Fotoğraf |
+|------|-------|----------|
+| 1–20 | 978–997 | havuz (`galeri.js` içindeki `HAVUZ` sırası) |
+| 21 | 998 | `sabri.png` |
+| 22 | 999 | `nur.png` |
+| 23 | 1000 | `mert.png` |
+
+Dağılım **kodda sabittir**: `HAVUZ` dizisi bir kez karıştırılıp yazıldı, rastgelelik çalışma anında üretilmez. Böylece herkes aynı sırayı görür ve sayfa yenilenince fotoğraflar yer değiştirmez. Sırayı değiştirmek istersen diziyi elle karıştırman yeterli.
+
+Hangi kutunun dolu olduğu **yalnızca sayıdan türer** (`sayı >= 978 + sıra`). Ayrı bir kayıt tutulmaz; sayfayı geç açan da, yenileyen de doğru tabloyu görür.
+
+**Eşiği veya hedefi değiştirmek:** `index.html`'deki `data-baslangic` ve `data-hedef`. Kutu sayısı aradaki farktan türer, final üçlüsü her zaman sona oturur.
+
+**Fotoğraf eklemek/değiştirmek:** Görseli `Maskot/` klasörüne koy, `galeri.js`'teki listeye `{ dosya: 'ad.png', odak: '50% 20%', zoom: 1.4 }` olarak yaz. `odak`/`zoom` yüzün daire içinde nereye oturacağını belirler (maskot bölümündeki kurallarla aynı); mevcut değerler her fotoğrafın yüzü bulunarak hesaplandı. Dosya eksikse o kutu silüet kalır, sayfa bozulmaz.
+
+Galeri tamamen dekoratiftir: `aria-hidden` taşır, çünkü sayıyı zaten sayacın duyuru alanı okur. 23 maskotun sakin duruş animasyonu kapalıdır — hareket yalnızca bir kutu dolarken olur.
+
+**Prova:** `?demo=` ile sayıyı elle sür, ağa çıkılmaz.
+
+```
+?demo=977    galeri gizli (eşik altı)
+?demo=990    ilk 13 kutu dolu
+?demo=1000   hepsi dolu, final üçlüsü yeşil
+?demo=auto   974'ten 1000'e birer birer tırmanır (tam prova)
+```
+
+## Hedef kutlaması
+
+Sayı **1000'e** ulaştığında ekranı kaplayan bir kutlama açılır: ortada **Mert'in**
+fotoğrafıyla dans eden büyük bir maskot, etrafta konfeti, altında "1.000 kişi!".
+**10 saniye** sonra kendiliğinden kapanır.
+
+Konfeti iki katmandır: açılışta ekranın ortasından dışarı fışkıran bir patlama,
+ardından kutlama boyunca üstten süzülen yağmur. Kütüphane yok, hepsi CSS animasyonu.
+
+**Ne zaman açılır:** sayı hedefe ulaştığı anda ve 1000'e ulaşıldıktan sonra sayfayı
+her açanda. Aynı sayfada bir kezden fazla açılmaz (30 saniyelik tazeleme döngüsü
+tekrar tetiklemez).
+
+**Nasıl kapanır:** 10 saniye dolunca, "Kapat" düğmesiyle, ekranın herhangi bir
+yerine tıklayınca ya da `Esc` ile. Kutlama açıkken arkadaki sayfa kaydırılamaz.
+
+**Ayarlar** — hepsi `index.html`'deki `.devfest-kutlama` öğesinde:
+
+| Öznitelik | Ne yapar |
+|-----------|----------|
+| `data-hedef` | Hangi sayıda açılacağı |
+| `data-sure` | Ekranda kalma süresi (ms) |
+| `data-foto` | Ortadaki maskotun fotoğrafı |
+| `data-odak` / `data-zoom` | Fotoğrafın daire içindeki çerçevelemesi |
+
+**Prova:** `?kutlama-sure=180000` ile kutlamayı uzun süre açık tutabilirsin —
+dansı ve konfetiyi rahatça ayarlamak için. `?demo=1000` ile sayıyı hedefe
+sabitleyip doğrudan kutlamayı açarsın.
+
+`prefers-reduced-motion` açıkken konfeti ve dans devre dışı; fotoğraf, sayı ve
+kapatma düğmesi hareketsiz görünür.
 
 ## Bakım
 
@@ -224,7 +288,9 @@ Kalıcı kullanım için Kommunity ekibinden resmî API erişimi istemek en sağ
 - [ ] Sayfa canlıda açılıyor, yeşil nokta yanıp sönüyor mu (= veri taze)
 - [ ] `data-yedek` değeri güncel mi
 - [ ] Mobilde ve karanlık temada görünüm bozuk değil mi
-- [ ] `maskot.png` ve `maskot-2.png` yerinde mi (yoksa çizim yüz görünür)
+- [ ] `Maskot/maskot.png` ve `Maskot/maskot-2.png` yerinde mi (yoksa çizim yüz görünür)
+- [ ] `?demo=auto` ile galeri provası yapıldı mı (23 kutu, final sırası doğru mu)
+- [ ] `?demo=1000` ile kutlama provası yapıldı mı (Mert dans ediyor, konfeti akıyor)
 - [ ] GA4 gerçek zamanlı raporu kendi ziyaretini görüyor mu
 
 ## Dosyalar
@@ -235,8 +301,11 @@ sayac.js     sayaç bileşeni (sıfır bağımlılık)
 sayac.css    sayaç stilleri
 maskot.js    alkışlayan karakter (sayacı tanımaz, olayla bağlı)
 maskot.css   maskot stilleri ve animasyonları
-maskot.png   sağdaki maskotun fotoğrafı
-maskot-2.png soldaki maskotun fotoğrafı
+galeri.js    1000'e son 23 kişi sırası (maskot.js'in API'sini kullanır)
+galeri.css   galeri stilleri
+kutlama.js   hedefe ulaşınca açılan tam ekran kutlama
+kutlama.css  kutlama katmanı, dans ve konfeti
+Maskot/      tüm fotoğraflar (üstteki iki maskot + galeri havuzu + final üçlüsü)
 analitik.js  GA4 ölçümü + çerez onayı (sayacı tanımaz, olayla bağlı)
 analitik.css çerez onay şeridinin stilleri
 ```

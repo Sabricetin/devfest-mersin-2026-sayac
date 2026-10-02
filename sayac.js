@@ -32,6 +32,7 @@
   var calisiyor = false;
   var sonDeneme  = 0;    // son isteğin başlangıç zamanı (ms)
   var sonCizilen = null; // en son ekrana yazılan sayı (olay yayını için)
+  var olaySira   = 0;    // her yayın bir numara alır; geç gelen dinleyici tekrar işlemesin
   var kimlik     = 0;    // gradient id'leri çakışmasın diye
 
   /* ---------------------------------------------------------------- yardımcı */
@@ -177,9 +178,15 @@
       hedef:  ogeler[0] ? ogeler[0]._hedef : null
     };
 
-    // Bir sonraki döngüde yay. Sayfa açılışında istek çok hızlı dönerse (önbellek,
-    // yerel sunucu) bu olay, defer'li maskot.js daha çalışmadan çıkar ve kaçırılır.
-    // setTimeout, tüm defer'li betiklerin çalışmasını garantiler.
+    detay.sira = ++olaySira;
+
+    // Son durum burada da durur. Olayı kaçıran bir dinleyici (defer'li betikler
+    // sırayla yüklenirken tarayıcı bekleyebilir ve o aralıkta timer ateşlenir)
+    // kurulurken bunu okuyup kendini güncelleyebilir.
+    window.DevfestSayac = { son: detay };
+
+    // Yayın bir sonraki döngüde: açılışta istek çok hızlı dönerse (önbellek,
+    // yerel sunucu) olay, dinleyiciler kurulmadan çıkardı.
     setTimeout(function () {
       document.dispatchEvent(new CustomEvent('devfest:sayac', { detail: detay }));
     }, 0);
@@ -233,6 +240,35 @@
   function gorunurlukDegisti() {
     if (document.hidden) clearTimeout(zamanlayici);
     else planla();
+  }
+
+  /* ------------------------------------------------------------ prova */
+
+  // ?demo=990  → sayı elle sürülür, ağa çıkılmaz.
+  // ?demo=auto → eşiğin biraz altından hedefe kadar birer birer tırmanır.
+  // Sahte sayı da gerçek yoldan (ciz → devfest:sayac) geçer; böylece maskot
+  // ve galeri provada da canlıdaki gibi davranır.
+  function demoOku() {
+    var m = /[?&]demo=([^&]*)/.exec(location.search);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
+  function demoBasla(deger, hedef) {
+    if (deger !== 'auto') {
+      var n = parseInt(deger, 10);
+      if (gecerliSayi(n)) ciz(n, 'live');
+      return;
+    }
+
+    var son  = gecerliSayi(hedef) && hedef > 0 ? hedef : 1000;
+    var sayi = Math.max(0, son - 26);   // eşiğin altından başla: galeri önce gizli
+    ciz(sayi, 'live');
+
+    var saat = setInterval(function () {
+      if (sayi >= son) { clearInterval(saat); return; }
+      sayi += 1;
+      ciz(sayi, 'live');
+    }, 1500);
   }
 
   /* ----------------------------------------------------------- başlatma */
@@ -331,6 +367,10 @@
 
     // Sayfada birden çok sayaç olsa da tek döngü, tek istek; sonuç hepsine dağılır.
     ayar = ayarlariOku(ogeler[0]);
+
+    // Prova modunda ağ döngüsü hiç kurulmaz.
+    var demo = demoOku();
+    if (demo !== null) { demoBasla(demo, ogeler[0]._hedef); return; }
 
     // Son bilinen değer yalnızca düşme zinciri için yüklenir, ekrana basılmaz:
     // her açılışta sayaç sıfırdan sayarak güncel değere çıkar.

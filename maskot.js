@@ -12,7 +12,7 @@
   var YAYILMA_ACILIS = 1200;  // açılışta balonların dağıldığı süre (sayaç dolarken)
   var YAYILMA_ARTIS  = 500;   // yeni kayıt geldiğinde
   var KAYDIRMA_MS  = 140;  // birden çok maskot varsa aralarındaki gecikme
-  var VARSAYILAN_FOTO = 'maskot.png';
+  var VARSAYILAN_FOTO = 'Maskot/maskot.webp';
   var KUTU = { x: 56, y: 18, boy: 88 };   // kafadaki fotoğraf alanı (SVG birimi)
 
   var azHareket = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -178,11 +178,20 @@
   /* ------------------------------------------------------------- başlatma */
 
   function basla() {
-    var maskotlar = [].slice.call(document.querySelectorAll(SECICI)).map(hazirla);
+    // Sayfadaki her maskot kurulur; ama data-oto="hayir" olanlar toplu alkışa
+    // katılmaz. Onları galeri gibi başka bir bileşen kendi sırasına göre
+    // alkışlatır — yoksa 20+ maskot her kayıtta hep birlikte zıplardı.
+    [].slice.call(document.querySelectorAll(SECICI)).forEach(hazirla);
+
+    var maskotlar = [].slice.call(
+      document.querySelectorAll(SECICI + ':not([data-oto="hayir"])'));
     if (!maskotlar.length) return;
 
-    document.addEventListener('devfest:sayac', function (olay) {
-      var d = olay.detail;
+    var sonSira = 0;
+
+    function isle(d) {
+      if (d.sira && d.sira <= sonSira) return;   // aynı yayını iki kez işleme
+      sonSira = d.sira || 0;
       // Açılışta (sayaç sıfırdan sayarken) her zaman alkışlar.
       // Sonrasında yalnızca taze veriyle gelen gerçek artışta; düşüş ve
       // stale/fallback geçişleri sessizdir.
@@ -196,8 +205,23 @@
         if (kap._sira) clearTimeout(kap._sira);
         kap._sira = setTimeout(function () { alkisla(kap, d.artis, yayilma); }, i * KAYDIRMA_MS);
       });
-    });
+    }
+
+    document.addEventListener('devfest:sayac', function (olay) { isle(olay.detail); });
+
+    // Sayaç bu betik çalışmadan önce yayın yapmış olabilir.
+    if (window.DevfestSayac && window.DevfestSayac.son) isle(window.DevfestSayac.son);
   }
+
+  /* ------------------------------------------------------------------ API */
+
+  // Bu üçü dışarıya açık; gerisi kapalı. Galeri bileşeni SVG iskeletini,
+  // daire içi çerçevelemeyi ve alkışı burada yazıldığı gibi kullanır.
+  window.DevfestMaskot = {
+    kur:     hazirla,         // (kap) → iskelet + varsa data-foto
+    foto:    fotografYukle,   // (kap, yol) sonradan fotoğraf yükle/değiştir
+    alkisla: alkisla          // (kap, artis, yayilmaMs) tek maskotu alkışlat
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', basla);
