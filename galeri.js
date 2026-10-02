@@ -122,9 +122,17 @@
 
   function basligiYaz(sayi) {
     var kalan = HEDEF - sayi;
-    var metin = kalan > 0
-      ? bicim.format(HEDEF) + "'e son <b>" + bicim.format(kalan) + '</b> kişi'
-      : '<b>' + bicim.format(HEDEF) + ' kişi</b> — hedefe ulaşıldı 🎉';
+    var metin;
+    if (sayi < BASLANGIC) {
+      // Kutular henüz dolmaya başlamadı: boş silüetler merak uyandırsın,
+      // başlık da ne olacağını söylesin.
+      metin = bicim.format(HEDEF) + "'e <b>" + bicim.format(kalan) + '</b> kişi — ' +
+              'son ' + bicim.format(KUTU_SAYISI) + "'ü tek tek burada belirecek";
+    } else if (kalan > 0) {
+      metin = bicim.format(HEDEF) + "'e son <b>" + bicim.format(kalan) + '</b> kişi';
+    } else {
+      metin = '<b>' + bicim.format(HEDEF) + ' kişi</b> — hedefe ulaşıldı 🎉';
+    }
     if (baslik.innerHTML !== metin) baslik.innerHTML = metin;
   }
 
@@ -138,10 +146,11 @@
     if (d.sira && d.sira <= sonSira) return;   // aynı yayını iki kez işleme
     sonSira = d.sira || 0;
 
-    // Eşiğin altındayken galeri diye bir şey yok.
-    if (sayi < BASLANGIC) { bolum.hidden = true; return; }
+    // Eşiğin altında da sıra görünür: 23 boş silüet dolmayı bekler.
+    // Kutular yalnızca sayı eşiğe geldiğinde birer birer dolmaya başlar.
     bolum.hidden = false;
     basligiYaz(sayi);
+    if (sayi < BASLANGIC) return;
 
     var olmasiGereken = Math.min(KUTU_SAYISI, sayi - BASLANGIC + 1);
 

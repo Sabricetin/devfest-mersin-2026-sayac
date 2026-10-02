@@ -97,7 +97,9 @@ Olay alanları: `count` (yeni sayı), `onceki`, `artis` (fark; açılışta say�
 
 ## 1000'e son 23 kişi
 
-Sayı **978'e** ulaştığında sayacın altında 23 maskotluk bir sıra açılır. Kutular önce gri **silüet** olarak durur; her yeni kayıtta sıradaki kutu bir fotoğrafla dolar, yerine oturur ve tek başına alkışlar. 978 → 1000 arası tam 23 kayıt eder, yani her kutu bir kişiye denk gelir.
+Sayacın altında 23 maskotluk bir sıra durur. Kutular **en baştan** gri silüet olarak görünür — kim olduğu belli olmayan 23 kişi, dolmayı bekler. Sayı **978'e** gelince ilki dolar; sonra her yeni kayıtta sıradaki kutu bir fotoğrafla dolar, yerine oturur ve tek başına alkışlar. 978 → 1000 arası tam 23 kayıt eder, yani her kutu bir kişiye denk gelir.
+
+Silüetleri eşikten önce de göstermek bilinçli: sayfaya gelen "bunlar kim, ne zaman dolacak?" diye merak etsin. Başlık da eşiğe kadar bunu söyler — *"1.000'e 68 kişi — son 23'ü tek tek burada belirecek"*.
 
 Son üç kutu sabittir ve **yeşil halkayla** ayrışır:
 
@@ -121,7 +123,7 @@ Galeri tamamen dekoratiftir: `aria-hidden` taşır, çünkü sayıyı zaten saya
 **Prova:** `?demo=` ile sayıyı elle sür, ağa çıkılmaz.
 
 ```
-?demo=977    galeri gizli (eşik altı)
+?demo=977    23 silüet bekliyor, hiçbiri dolu değil (eşik altı)
 ?demo=990    ilk 13 kutu dolu
 ?demo=1000   hepsi dolu, final üçlüsü yeşil
 ?demo=auto   974'ten 1000'e birer birer tırmanır (tam prova)

@@ -30,7 +30,9 @@
 .devfest-galeri__kutu {
   flex: 0 0 auto;
   width: var(--galeri-kutu);
-  opacity: 0.34;
+  /* Silüetler eşikten önce de sayfada durup merak uyandırıyor; fark edilecek
+     kadar belirgin, dolmuş kutularla karışmayacak kadar sönük olmalılar. */
+  opacity: 0.5;
   transition: opacity 0.5s ease;
 }
 
@@ -38,11 +40,11 @@
 
 .devfest-galeri__kutu .devfest-maskot {
   --maskot-genislik:  100%;
-  --maskot-renk:      #c4c7c5;
-  --maskot-halka:     #dadce0;
-  --maskot-eldiven:   #e8eaed;
-  --maskot-ayakkabi:  #9aa0a6;
-  --maskot-yuz-zemin: #e8eaed;
+  --maskot-renk:      #9aa0a6;
+  --maskot-halka:     #bdc1c6;
+  --maskot-eldiven:   #dadce0;
+  --maskot-ayakkabi:  #80868b;
+  --maskot-yuz-zemin: #dadce0;
 }
 
 /* Dolmamış kutu suratsız dursun: silüet, bekleyen bir yer tutucu. */
@@ -99,11 +101,11 @@
 
 @media (prefers-color-scheme: dark) {
   .devfest-galeri__kutu .devfest-maskot {
-    --maskot-renk:      #3c4043;
-    --maskot-halka:     #35383b;
-    --maskot-eldiven:   #45484b;
-    --maskot-ayakkabi:  #2a2d30;
-    --maskot-yuz-zemin: #35383b;
+    --maskot-renk:      #474b4f;
+    --maskot-halka:     #3f4347;
+    --maskot-eldiven:   #51555a;
+    --maskot-ayakkabi:  #303336;
+    --maskot-yuz-zemin: #3f4347;
   }
   .devfest-galeri__kutu--dolu .devfest-maskot {
     --maskot-renk:     #8ab4f8;
